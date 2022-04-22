@@ -1,0 +1,15 @@
+# Docs: https://kubernetes.io/zh/docs/concepts/storage/storage-classes/
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: nfs-client
+provisioner: k8s-sigs.io/nfs-subdir-external-provisioner
+allowVolumeExpansion: true
+reclaimPolicy: Retain
+volumeBindingMode: Immediate
+parameters:
+  server: 192.168.33.86
+  path: /nfs-data
+  readOnly: "false"
+
+

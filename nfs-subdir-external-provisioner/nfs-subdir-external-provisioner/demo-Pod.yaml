@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: demo-pod
+  namespace: default
+  labels:
+    app: demo-pod
+spec:
+  containers:
+    - name: demo-pod
+      image: nginx
+      imagePullPolicy: IfNotPresent
+      volumeMounts:
+        - mountPath: /usr/share/nginx/html
+          name: demo-pvc
+  restartPolicy: Always
+  volumes:
+    - name: demo-pvc
+      persistentVolumeClaim:
+        claimName: demo-pvc
