@@ -18,7 +18,7 @@ metadata:
     app.kubernetes.io/part-of: ingress-nginx
     app.kubernetes.io/version: 1.2.0
   name: ingress-nginx
-  namespace: ingress-nginx-controller
+  namespace: ingress-nginx
 ---
 apiVersion: v1
 kind: ServiceAccount
@@ -30,7 +30,7 @@ metadata:
     app.kubernetes.io/part-of: ingress-nginx
     app.kubernetes.io/version: 1.2.0
   name: ingress-nginx-admission
-  namespace: ingress-nginx-controller
+  namespace: ingress-nginx
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
@@ -42,7 +42,7 @@ metadata:
     app.kubernetes.io/part-of: ingress-nginx
     app.kubernetes.io/version: 1.2.0
   name: ingress-nginx
-  namespace: ingress-nginx-controller
+  namespace: ingress-nginx
 rules:
   - apiGroups:
       - ""
@@ -124,7 +124,7 @@ metadata:
     app.kubernetes.io/part-of: ingress-nginx
     app.kubernetes.io/version: 1.2.0
   name: ingress-nginx-admission
-  namespace: ingress-nginx-controller
+  namespace: ingress-nginx
 rules:
   - apiGroups:
       - ""
@@ -229,15 +229,15 @@ metadata:
     app.kubernetes.io/part-of: ingress-nginx
     app.kubernetes.io/version: 1.2.0
   name: ingress-nginx
-  namespace: ingress-nginx-controller
+  namespace: ingress-nginx
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: ingress-nginx-controller
+  name: ingress-nginx
 subjects:
   - kind: ServiceAccount
-    name: ingress-nginx-controller
-    namespace: ingress-nginx-controller
+    name: ingress-nginx
+    namespace: ingress-nginx
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
@@ -249,15 +249,15 @@ metadata:
     app.kubernetes.io/part-of: ingress-nginx
     app.kubernetes.io/version: 1.2.0
   name: ingress-nginx-admission
-  namespace: ingress-nginx-controller
+  namespace: ingress-nginx
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: ingress-nginx-controller-admission
+  name: ingress-nginx-admission
 subjects:
   - kind: ServiceAccount
-    name: ingress-nginx-controller-admission
-    namespace: ingress-nginx-controller
+    name: ingress-nginx-admission
+    namespace: ingress-nginx
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -271,11 +271,11 @@ metadata:
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: ingress-nginx-controller
+  name: ingress-nginx
 subjects:
   - kind: ServiceAccount
-    name: ingress-nginx-controller
-    namespace: ingress-nginx-controller
+    name: ingress-nginx
+    namespace: ingress-nginx
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -290,11 +290,11 @@ metadata:
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: ingress-nginx-controller-admission
+  name: ingress-nginx-admission
 subjects:
   - kind: ServiceAccount
-    name: ingress-nginx-controller-admission
-    namespace: ingress-nginx-controller
+    name: ingress-nginx-admission
+    namespace: ingress-nginx
 ---
 apiVersion: v1
 data:
@@ -308,7 +308,7 @@ metadata:
     app.kubernetes.io/part-of: ingress-nginx
     app.kubernetes.io/version: 1.2.0
   name: ingress-nginx-controller
-  namespace: ingress-nginx-controller
+  namespace: ingress-nginx
 ---
 apiVersion: v1
 kind: Service
@@ -320,7 +320,7 @@ metadata:
     app.kubernetes.io/part-of: ingress-nginx
     app.kubernetes.io/version: 1.2.0
   name: ingress-nginx-controller
-  namespace: ingress-nginx-controller
+  namespace: ingress-nginx
 spec:
   externalTrafficPolicy: Local
   ports:
@@ -350,7 +350,7 @@ metadata:
     app.kubernetes.io/part-of: ingress-nginx
     app.kubernetes.io/version: 1.2.0
   name: ingress-nginx-controller-admission
-  namespace: ingress-nginx-controller
+  namespace: ingress-nginx
 spec:
   ports:
     - appProtocol: https
@@ -373,7 +373,7 @@ metadata:
     app.kubernetes.io/part-of: ingress-nginx
     app.kubernetes.io/version: 1.2.0
   name: ingress-nginx-controller
-  namespace: ingress-nginx-controller
+  namespace: ingress-nginx
 spec:
   minReadySeconds: 0
   revisionHistoryLimit: 10
@@ -392,11 +392,11 @@ spec:
       containers:
         - args:
             - /nginx-ingress-controller
-            - --publish-service=$(POD_NAMESPACE)/ingress-nginx-controller-controller
+            - --publish-service=$(POD_NAMESPACE)/ingress-nginx-controller
             - --election-id=ingress-controller-leader
-            - --controller-class=k8s.io/ingress-nginx-controller
+            - --controller-class=k8s.io/ingress-nginx
             - --ingress-class=nginx
-            - --configmap=$(POD_NAMESPACE)/ingress-nginx-controller-controller
+            - --configmap=$(POD_NAMESPACE)/ingress-nginx-controller
             - --validating-webhook=:8443
             - --validating-webhook-certificate=/usr/local/certificates/cert
             - --validating-webhook-key=/usr/local/certificates/key
@@ -468,12 +468,12 @@ spec:
       dnsPolicy: ClusterFirst
       nodeSelector:
         kubernetes.io/os: linux
-      serviceAccountName: ingress-nginx-controller
+      serviceAccountName: ingress-nginx
       terminationGracePeriodSeconds: 300
       volumes:
         - name: webhook-cert
           secret:
-            secretName: ingress-nginx-controller-admission
+            secretName: ingress-nginx-admission
 ---
 apiVersion: batch/v1
 kind: Job
@@ -485,7 +485,7 @@ metadata:
     app.kubernetes.io/part-of: ingress-nginx
     app.kubernetes.io/version: 1.2.0
   name: ingress-nginx-admission-create
-  namespace: ingress-nginx-controller
+  namespace: ingress-nginx
 spec:
   template:
     metadata:
@@ -500,9 +500,9 @@ spec:
       containers:
         - args:
             - create
-            - --host=ingress-nginx-controller-controller-admission,ingress-nginx-controller-controller-admission.$(POD_NAMESPACE).svc
+            - --host=ingress-nginx-controller-admission,ingress-nginx-controller-admission.$(POD_NAMESPACE).svc
             - --namespace=$(POD_NAMESPACE)
-            - --secret-name=ingress-nginx-controller-admission
+            - --secret-name=ingress-nginx-admission
           env:
             - name: POD_NAMESPACE
               valueFrom:
@@ -520,7 +520,7 @@ spec:
         fsGroup: 2000
         runAsNonRoot: true
         runAsUser: 2000
-      serviceAccountName: ingress-nginx-controller-admission
+      serviceAccountName: ingress-nginx-admission
 ---
 apiVersion: batch/v1
 kind: Job
@@ -532,7 +532,7 @@ metadata:
     app.kubernetes.io/part-of: ingress-nginx
     app.kubernetes.io/version: 1.2.0
   name: ingress-nginx-admission-patch
-  namespace: ingress-nginx-controller
+  namespace: ingress-nginx
 spec:
   template:
     metadata:
@@ -547,10 +547,10 @@ spec:
       containers:
         - args:
             - patch
-            - --webhook-name=ingress-nginx-controller-admission
+            - --webhook-name=ingress-nginx-admission
             - --namespace=$(POD_NAMESPACE)
             - --patch-mutating=false
-            - --secret-name=ingress-nginx-controller-admission
+            - --secret-name=ingress-nginx-admission
             - --patch-failure-policy=Fail
           env:
             - name: POD_NAMESPACE
@@ -569,7 +569,7 @@ spec:
         fsGroup: 2000
         runAsNonRoot: true
         runAsUser: 2000
-      serviceAccountName: ingress-nginx-controller-admission
+      serviceAccountName: ingress-nginx-admission
 ---
 apiVersion: networking.k8s.io/v1
 kind: IngressClass
@@ -582,7 +582,7 @@ metadata:
     app.kubernetes.io/version: 1.2.0
   name: nginx
 spec:
-  controller: k8s.io/ingress-nginx-controller
+  controller: k8s.io/ingress-nginx
 ---
 apiVersion: admissionregistration.k8s.io/v1
 kind: ValidatingWebhookConfiguration
@@ -599,8 +599,8 @@ webhooks:
       - v1
     clientConfig:
       service:
-        name: ingress-nginx-controller-controller-admission
-        namespace: ingress-nginx-controller
+        name: ingress-nginx-controller-admission
+        namespace: ingress-nginx
         path: /networking/v1/ingresses
     failurePolicy: Fail
     matchPolicy: Equivalent
